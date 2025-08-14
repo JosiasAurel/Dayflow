@@ -72,8 +72,8 @@ body { margin: 0; background: var(--bg); color: var(--fg); }
 .gallery { background: transparent; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
 .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); display: flex; flex-direction: column; }
-.thumb { height: 140px; background-color: #ddd; display: grid; place-items: center; overflow: hidden; }
-.thumb-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.thumb { position: relative; height: 160px; background-color: #ddd; overflow: hidden; }
+.thumb-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 .card-body { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
 .title-row { display: flex; align-items: center; gap: 8px; }
 .title { font-weight: 600; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
