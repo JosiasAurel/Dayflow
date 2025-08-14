@@ -1,0 +1,100 @@
+.logo.vite:hover {
+  filter: drop-shadow(0 0 2em #747bff);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafb);
+}
+:root {
+  color-scheme: light dark;
+  font-family: ui-rounded, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  font-size: 15px;
+  --bg: #f6f6f6;
+  --fg: #0f0f0f;
+  --muted: #8a8a8a;
+  --border: #e6e6e6;
+  --card: #ffffff;
+  --shadow: 0 10px 30px rgba(0,0,0,0.06);
+  --primary: #007aff;
+  --danger: #ff3b30;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1e1e1f;
+    --fg: #f5f5f7;
+    --muted: #a5a5a7;
+    --border: #2a2a2c;
+    --card: #232325;
+    --shadow: 0 10px 30px rgba(0,0,0,0.3);
+    --primary: #0a84ff;
+    --danger: #ff453a;
+  }
+}
+
+html, body, #root { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--fg); }
+
+.app-root { display: flex; flex-direction: column; height: 100%; }
+.toolbar {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+  background: color-mix(in hsl, var(--bg), transparent 25%);
+}
+.brand { font-weight: 600; letter-spacing: 0.3px; }
+.spacer { flex: 1; }
+.search { min-width: 220px; }
+
+.content { display: grid; grid-template-columns: 340px 1fr; gap: 20px; padding: 20px; overflow: auto; }
+
+.editor-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; box-shadow: var(--shadow); position: sticky; top: 20px; align-self: start; }
+.section-title { font-weight: 600; margin-bottom: 10px; }
+
+.form-row { display: grid; grid-template-columns: 90px 1fr; align-items: center; gap: 10px; margin: 10px 0; }
+.wallpaper-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+.file-pill { display: flex; align-items: center; gap: 10px; border: 1px dashed var(--border); background: var(--bg); border-radius: 10px; padding: 6px 8px; min-height: 38px; overflow: hidden; }
+.file-thumb { width: 36px; height: 26px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); }
+.file-name { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: var(--fg); }
+.file-name.muted { color: var(--muted); }
+
+.segmented { display: inline-flex; background: var(--bg); border: 1px solid var(--border); border-radius: 9px; padding: 2px; }
+.seg { border: 0; background: transparent; padding: 6px 10px; border-radius: 7px; color: var(--fg); }
+.seg.active { background: var(--card); box-shadow: var(--shadow); }
+
+.form-actions { display: flex; gap: 10px; margin-top: 14px; align-items: center; }
+.hint { margin-top: 10px; color: var(--muted); font-size: 13px; }
+
+.gallery { background: transparent; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); display: flex; flex-direction: column; }
+.thumb { height: 140px; background-color: #ddd; display: grid; place-items: center; overflow: hidden; }
+.thumb-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.card-body { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+.title-row { display: flex; align-items: center; gap: 8px; }
+.title { font-weight: 600; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.badge { font-size: 12px; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); text-transform: capitalize; }
+.badge.dark { background: #1c1c1e; color: #d1d1d6; }
+.badge.light { background: #f2f2f7; color: #2c2c2e; }
+.actions { display: flex; gap: 8px; }
+.empty { color: var(--muted); padding: 24px; text-align: center; }
+
+input, button {
+  font: inherit;
+  color: var(--fg);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 12px;
+  outline: none;
+}
+
+button { cursor: pointer; background: linear-gradient(180deg, color-mix(in hsl, var(--card), white 6%), var(--card)); }
+button.primary { background: linear-gradient(180deg, color-mix(in hsl, var(--primary), white 12%), var(--primary)); color: white; border-color: color-mix(in hsl, var(--primary), black 12%); }
+button.danger { background: linear-gradient(180deg, color-mix(in hsl, var(--danger), white 12%), var(--danger)); color: white; border-color: color-mix(in hsl, var(--danger), black 12%); }
+button:active { transform: translateY(1px); }
+button:disabled { opacity: 0.6; cursor: not-allowed; }
