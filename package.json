@@ -7,22 +7,24 @@
     "dev": "vite --port 1420 --strictPort",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "icons": "node ./tools/generate-icons.mjs"
   },
   "dependencies": {
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
     "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-dialog": "^2",
     "@tauri-apps/plugin-opener": "^2",
-    "@tauri-apps/plugin-dialog": "^2"
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^2",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^4.6.0",
-    "typescript": "~5.8.3",
-    "vite": "^7.0.4",
     "esbuild": "^0.24.2",
-    "@tauri-apps/cli": "^2"
+    "sharp": "^0.33.5",
+    "typescript": "~5.8.3",
+    "vite": "^7.0.4"
   }
 }

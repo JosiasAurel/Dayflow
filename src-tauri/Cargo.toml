@@ -27,5 +27,6 @@ anyhow = "1"
 nanoid = "0.4"
 base64 = "0.22"
 infer = "0.15"
+image = { version = "0.25", default-features = false, features = ["png"] }
 dirs = "5"
 

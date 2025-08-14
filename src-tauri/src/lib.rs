@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::{fs, path::PathBuf};
 use base64::Engine as _;
+// use tauri::Manager; // not used
 
 // Basic theme pack model stored as JSON in app data dir
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -218,9 +219,17 @@ pub fn run() {
                 menu.append(&item)?;
             }
             // Create tray with static menu; clicks handled via on_menu_event
+            // Embed tray icon PNG to ensure availability
+            let tray_png: &[u8] = include_bytes!("../icons/icon.png");
+            let tray_image = {
+                let img = image::load_from_memory(tray_png).expect("invalid tray icon PNG");
+                let rgba = img.to_rgba8();
+                tauri::image::Image::new_owned(rgba.to_vec(), rgba.width(), rgba.height())
+            };
+
             let _tray = TrayIconBuilder::new()
-                .title("Dayflow")
                 .menu(&menu)
+                .icon(tray_image)
                 .build(app)?;
             app.on_menu_event(|app, event| {
                 let id = event.id().as_ref().to_owned();

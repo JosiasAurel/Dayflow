@@ -4,6 +4,7 @@ import sharp from 'sharp';
 
 const projectRoot = path.resolve(process.cwd());
 const srcSvg = path.join(projectRoot, 'src-tauri', 'icons', 'dayflow.svg');
+const traySvg = path.join(projectRoot, 'src-tauri', 'icons', 'tray-dayflow.svg');
 const outDir = path.join(projectRoot, 'src-tauri', 'icons');
 
 const targets = [
@@ -18,6 +19,11 @@ async function ensureSvgExists() {
     await fs.access(srcSvg);
   } catch {
     throw new Error(`Source SVG not found at ${srcSvg}`);
+  }
+  try {
+    await fs.access(traySvg);
+  } catch {
+    throw new Error(`Tray SVG not found at ${traySvg}`);
   }
 }
 
@@ -34,6 +40,16 @@ async function generate() {
     await img.toFile(outPath);
     console.log('Wrote', outPath);
   }
+
+  // Generate tray icon PNG to /public
+  const trayOut = path.join(projectRoot, 'public', 'tray-dayflow.png');
+  const trayBuf = await fs.readFile(traySvg);
+  await fs.mkdir(path.dirname(trayOut), { recursive: true });
+  await sharp(trayBuf, { density: 512 })
+    .resize(24, 24, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .png({ compressionLevel: 9 })
+    .toFile(trayOut);
+  console.log('Wrote', trayOut);
 }
 
 generate().catch((e) => {

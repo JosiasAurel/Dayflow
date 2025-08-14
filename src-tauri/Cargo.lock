@@ -710,6 +710,7 @@ dependencies = [
  "anyhow",
  "base64 0.22.1",
  "dirs 5.0.1",
+ "image",
  "infer 0.15.0",
  "nanoid",
  "serde",
@@ -1757,6 +1758,7 @@ dependencies = [
  "bytemuck",
  "byteorder-lite",
  "num-traits",
+ "png",
 ]
 
 [[package]]
