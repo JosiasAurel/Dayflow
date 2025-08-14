@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::{fs, path::PathBuf};
 use base64::Engine as _;
-// use tauri::Manager; // not used
+// use tauri::Manager; // not required
 
 // Basic theme pack model stored as JSON in app data dir
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -65,7 +65,7 @@ struct CreatePackArgs {
 }
 
 #[tauri::command]
-fn create_theme_pack(_app: tauri::AppHandle, args: CreatePackArgs) -> Result<ThemePack, String> {
+fn create_theme_pack(app: tauri::AppHandle, args: CreatePackArgs) -> Result<ThemePack, String> {
     if args.system_theme != "light" && args.system_theme != "dark" {
         return Err("system_theme must be 'light' or 'dark'".into());
     }
@@ -79,6 +79,8 @@ fn create_theme_pack(_app: tauri::AppHandle, args: CreatePackArgs) -> Result<The
     };
     packs.push(pack.clone());
     write_packs(&packs)?;
+    // refresh tray menu
+    let _ = rebuild_tray_menu(&app);
     Ok(pack)
 }
 
@@ -93,7 +95,7 @@ struct UpdatePackArgs {
 }
 
 #[tauri::command]
-fn update_theme_pack(_app: tauri::AppHandle, args: UpdatePackArgs) -> Result<ThemePack, String> {
+fn update_theme_pack(app: tauri::AppHandle, args: UpdatePackArgs) -> Result<ThemePack, String> {
     if args.system_theme != "light" && args.system_theme != "dark" {
         return Err("system_theme must be 'light' or 'dark'".into());
     }
@@ -107,18 +109,21 @@ fn update_theme_pack(_app: tauri::AppHandle, args: UpdatePackArgs) -> Result<The
         };
         let out = packs[pos].clone();
         write_packs(&packs)?;
+        let _ = rebuild_tray_menu(&app);
         return Ok(out);
     }
     Err("Theme pack not found".into())
 }
 
 #[tauri::command]
-fn delete_theme_pack(_app: tauri::AppHandle, id: String) -> Result<(), String> {
+fn delete_theme_pack(app: tauri::AppHandle, id: String) -> Result<(), String> {
     let mut packs = read_packs();
     let original_len = packs.len();
     packs.retain(|p| p.id != id);
     if packs.len() == original_len { return Err("Theme pack not found".into()); }
-    write_packs(&packs)
+    write_packs(&packs)?;
+    let _ = rebuild_tray_menu(&app);
+    Ok(())
 }
 
 #[tauri::command]
@@ -132,6 +137,23 @@ fn apply_theme_pack(_app: tauri::AppHandle, id: String) -> Result<(), String> {
         set_macos_appearance(&pack.system_theme).map_err(|e| e.to_string())?;
     }
     Ok(())
+}
+
+fn rebuild_tray_menu(app: &tauri::AppHandle) -> Result<(), String> {
+    use tauri::menu::{ContextMenu, Menu, MenuItemBuilder};
+    if let Some(tray) = app.tray_by_id("tray") {
+        let menu = Menu::new(app).map_err(|e| e.to_string())?;
+        for pack in list_theme_packs(app.clone()) {
+            let item = MenuItemBuilder::with_id(pack.id.clone(), pack.name.clone())
+                .build(app)
+                .map_err(|e| e.to_string())?;
+            menu.append(&item).map_err(|e| e.to_string())?;
+        }
+        tray.set_menu(Some(menu)).map_err(|e| e.to_string())?;
+        Ok(())
+    } else {
+        Err("Tray icon not initialized".into())
+    }
 }
 
 #[derive(Deserialize)]
@@ -227,7 +249,7 @@ pub fn run() {
                 tauri::image::Image::new_owned(rgba.to_vec(), rgba.width(), rgba.height())
             };
 
-            let _tray = TrayIconBuilder::new()
+            let _tray = TrayIconBuilder::with_id("tray")
                 .menu(&menu)
                 .icon(tray_image)
                 .build(app)?;
