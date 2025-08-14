@@ -18,6 +18,7 @@ function App() {
   const [wallpaperPath, setWallpaperPath] = useState("");
   const [systemTheme, setSystemTheme] = useState<"light" | "dark">("light");
   const [search, setSearch] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
 
@@ -39,6 +40,7 @@ function App() {
     setName("");
     setWallpaperPath("");
     setSystemTheme("light");
+    setModalOpen(true);
   }
 
   function startEdit(pack: ThemePack) {
@@ -46,6 +48,7 @@ function App() {
     setName(pack.name);
     setWallpaperPath(pack.wallpaper_path);
     setSystemTheme(pack.system_theme);
+    setModalOpen(true);
   }
 
   async function pickWallpaper() {
@@ -93,6 +96,7 @@ function App() {
         setStatus("Theme created");
       }
       await refresh();
+      setModalOpen(false);
       startCreate();
     } catch (e) {
       console.error("Failed to save theme pack", e);
@@ -145,57 +149,6 @@ function App() {
       </header>
 
       <main className="content">
-        <section className="editor-card">
-          <div className="section-title">{editing ? "Edit Theme" : "Create Theme"}</div>
-          <div className="form-row">
-            <label>Name</label>
-            <input value={name} onChange={(e) => setName(e.currentTarget.value)} placeholder="My Theme" />
-          </div>
-          <div className="form-row">
-            <label>Wallpaper</label>
-            <div className="wallpaper-row">
-              <div className="file-pill" title={wallpaperPath || "No file chosen"}>
-                {previewData ? (
-                  <>
-                    <img className="file-thumb" src={previewData} alt="preview" />
-                    <div className="file-name">{wallpaperPath.split("/").pop()}</div>
-                  </>
-                ) : (
-                  <div className="file-name muted">No file chosen</div>
-                )}
-              </div>
-              <button onClick={pickWallpaper}>Choose…</button>
-            </div>
-          </div>
-          <div className="form-row">
-            <label>System Theme</label>
-            <div className="segmented">
-              <button
-                className={systemTheme === "light" ? "seg active" : "seg"}
-                onClick={() => setSystemTheme("light")}
-                type="button"
-              >
-                Light
-              </button>
-              <button
-                className={systemTheme === "dark" ? "seg active" : "seg"}
-                onClick={() => setSystemTheme("dark")}
-                type="button"
-              >
-                Dark
-              </button>
-            </div>
-          </div>
-          <div className="form-actions">
-            {editing && (
-              <button className="danger" onClick={() => removePack(editing.id)}>Delete</button>
-            )}
-            <div className="spacer" />
-            <button onClick={savePack} className="primary" disabled={!name || !wallpaperPath || saving}>{saving ? (editing ? "Saving…" : "Creating…") : (editing ? "Save Changes" : "Create")}</button>
-          </div>
-          {status && <div className="hint">{status}</div>}
-        </section>
-
         <section className="gallery">
           <div className="section-title">Gallery</div>
           <div className="grid">
@@ -220,6 +173,68 @@ function App() {
           </div>
         </section>
       </main>
+
+      {modalOpen && (
+        <div className="modal-overlay" onClick={() => setModalOpen(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+            <div className="modal-header">
+              <div className="modal-title">{editing ? "Edit Theme" : "Create Theme"}</div>
+            </div>
+            <button className="modal-close" onClick={() => setModalOpen(false)} aria-label="Close">✕</button>
+            <div className="modal-body">
+              <div className="form-row">
+                <label>Name</label>
+                <input value={name} onChange={(e) => setName(e.currentTarget.value)} placeholder="My Theme" />
+              </div>
+              <div className="form-row">
+                <label>Wallpaper</label>
+                <div className="wallpaper-row">
+                  <div className="file-pill" title={wallpaperPath || "No file chosen"}>
+                    {previewData ? (
+                      <>
+                        <img className="file-thumb" src={previewData} alt="preview" />
+                        <div className="file-name">{wallpaperPath.split("/").pop()}</div>
+                      </>
+                    ) : (
+                      <div className="file-name muted">No file chosen</div>
+                    )}
+                  </div>
+                  <button onClick={pickWallpaper} type="button">Choose…</button>
+                </div>
+              </div>
+              <div className="form-row">
+                <label>System Theme</label>
+                <div className="segmented">
+                  <button
+                    className={systemTheme === "light" ? "seg active" : "seg"}
+                    onClick={() => setSystemTheme("light")}
+                    type="button"
+                  >
+                    Light
+                  </button>
+                  <button
+                    className={systemTheme === "dark" ? "seg active" : "seg"}
+                    onClick={() => setSystemTheme("dark")}
+                    type="button"
+                  >
+                    Dark
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="modal-footer">
+              {editing && (
+                <button className="danger" onClick={() => removePack(editing.id)} type="button">Delete</button>
+              )}
+              <div className="spacer" />
+              <button onClick={savePack} className="primary" disabled={!name || !wallpaperPath || saving} type="button">
+                {saving ? (editing ? "Saving…" : "Creating…") : (editing ? "Save Changes" : "Create")}
+              </button>
+            </div>
+            {status && <div className="hint" style={{ marginTop: 8 }}>{status}</div>}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
