@@ -208,6 +208,26 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
+        .setup(|app| {
+            use tauri::menu::{Menu, MenuItemBuilder};
+            use tauri::tray::TrayIconBuilder;
+            // Build menu from current packs
+            let menu = Menu::new(app)?;
+            for pack in list_theme_packs(app.handle().clone()) {
+                let item = MenuItemBuilder::with_id(pack.id.clone(), pack.name.clone()).build(app)?;
+                menu.append(&item)?;
+            }
+            // Create tray with static menu; clicks handled via on_menu_event
+            let _tray = TrayIconBuilder::new()
+                .title("Dayflow")
+                .menu(&menu)
+                .build(app)?;
+            app.on_menu_event(|app, event| {
+                let id = event.id().as_ref().to_owned();
+                let _ = apply_theme_pack(app.clone(), id);
+            });
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
             list_theme_packs,
             create_theme_pack,
