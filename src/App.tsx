@@ -180,7 +180,19 @@ function App() {
             <div className="modal-header">
               <div className="modal-title">{editing ? "Edit Theme" : "Create Theme"}</div>
             </div>
-            <button className="modal-close" onClick={() => setModalOpen(false)} aria-label="Close">✕</button>
+            <button
+              className="modal-close"
+              onClick={() => setModalOpen(false)}
+              aria-label="Close"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: 0,
+              }}
+            >
+              ✕
+            </button>
             <div className="modal-body">
               <div className="form-row">
                 <label>Name</label>
