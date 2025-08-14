@@ -19,6 +19,9 @@
   --danger: #ff3b30;
 }
 
+/* Ensure padding/border are included in width calculations to avoid grid overflow */
+*, *::before, *::after { box-sizing: border-box; }
+
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #1e1e1f;
@@ -72,6 +75,7 @@ body { margin: 0; background: var(--bg); color: var(--fg); }
 .gallery { background: transparent; width: 100%; }
 .grid { display: grid; width: 100%; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; align-items: stretch; }
 .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); display: flex; flex-direction: column; }
+.card { min-width: 0; max-width: 100%; }
 .thumb { position: relative; height: 160px; background-color: #ddd; overflow: hidden; }
 .thumb-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 .card-body { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
